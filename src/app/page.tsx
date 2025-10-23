@@ -1,103 +1,198 @@
-import Image from "next/image";
+'use client';
+
+import { useRouter } from 'next/navigation';
+import Navbar from '@/components/Navbar';
+import Image from 'next/image';
+import styles from './page.module.css'; 
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const router = useRouter();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const goToLearnMore = () => {
+    router.push('/learnmore');
+  };
+
+  const goToSignup = () => {
+    router.push('/auth/signup');
+  };
+
+  return (
+    <div className={styles.homeContainer}>
+      <Navbar />
+      <main className={styles.introSection} id="home">
+        <div className={styles.introContent}>
+          <Image 
+            alt="Illustration" 
+            src="/img/logo_gccoed.png" 
+            className={styles.introLogo} 
+            width={500}
+            height={300}
+            priority
+          />
+          <div className={styles.introText}>
+            <h1>Mind<span className={styles.highlightEd}>Mates</span>:</h1>
+            <p>A Peer-Assisted Educational Sessions</p>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      <section id="learners" className={`${styles.contentSection} ${styles.learnersSection}`}>
+        <div className={`${styles.contentBox} ${styles.learnersContentBox}`}>
+          <h2 className={styles.learnersHeading}>LEARNERS</h2>
+          <p className={styles.learnerText}>
+            As a learner, you get the chance to boost your knowledge and sharpen
+            your skills in subjects that matter to you. Whether you're prepping
+            for exams, struggling with tricky topics, or just eager to learn more,
+            our platform connects you with mentors who can help. It's all about
+            learning at your own pace, with flexible and personalized support to
+            help you reach your academic goals.
+          </p>
+        </div>
+        <Image
+          className={styles.learnersImage}
+          src="/img/learners.png"
+          alt="Learners Illustration"
+          width={320}
+          height={320}
+        />
+      </section>
+      
+      <section id="mentors" className={`${styles.contentSection} ${styles.mentorsSection}`}>
+        <Image
+          className={styles.mentorsImage}
+          src="/img/mentors.png"
+          alt="Mentors Illustration"
+          width={290}
+          height={290}
+        />
+        <div className={`${styles.contentBox} ${styles.mentorContentBox}`}>
+          <h2 className={styles.mentorsHeading}>MENTORS</h2>
+          <p>
+            Being a mentor is more than just sharing what you know, it's about
+            helping others grow. By guiding fellow students through their academic
+            hurdles, you strengthen your own understanding while making a positive
+            difference. It's a fulfilling way to develop leadership skills,
+            improve communication, and contribute to a supportive student
+            community.
+          </p>
+        </div>
+      </section>
+      
+      <section id="how-it-works" className={styles.howItWorks}>
+        <h2>HOW IT WORKS</h2>
+        <div className={styles.howItWorksGrid}>
+          <div className={styles.row}>
+            <div className={styles.step}>
+              <Image 
+                src="/img/icon1.png" 
+                alt="Find a Mentor or Learner" 
+                width={85}
+                height={85}
+              />
+              <h3>Find a Mentor or Learner</h3>
+              <p>
+                Search and filter peers based on subjects, expertise,
+                availability, and ratings.
+              </p>
+            </div>
+            <div className={styles.step}>
+              <Image
+                src="/img/icon2.png"
+                alt="Check Profiles & Qualifications"
+                width={85}
+                height={85}
+              />
+              <h3>Check Profiles & Qualifications</h3>
+              <p>
+                View mentor and learner profiles, including expertise, experience,
+                and session availability.
+              </p>
+            </div>
+            <div className={styles.step}>
+              <Image 
+                src="/img/icon3.png" 
+                alt="Learn & Teach" 
+                width={85}
+                height={85}
+              />
+              <h3>Learn & Teach</h3>
+              <p>
+                Expand your knowledge or share your expertise by joining
+                peer-assisted sessions.
+              </p>
+            </div>
+          </div>
+          <div className={styles.row}>
+            <div className={styles.step}>
+              <Image 
+                src="/img/icon4.png" 
+                alt="Schedule Your Session" 
+                width={85}
+                height={85}
+              />
+              <h3>Schedule Your Session</h3>
+              <p>
+                Book a tutoring session at a time that works best for both you and
+                your peer.
+              </p>
+            </div>
+            <div className={styles.step}>
+              <Image 
+                src="/img/icon5.png" 
+                alt="Get Notified" 
+                width={85}
+                height={85}
+              />
+              <h3>Get Notified</h3>
+              <p>
+                Receive email reminders for upcoming sessions, booking changes, or
+                cancellations.
+              </p>
+            </div>
+            <div className={styles.step}>
+              <Image 
+                src="/img/icon6.png" 
+                alt="Rate & Review" 
+                width={85}
+                height={85}
+              />
+              <h3>Rate & Review</h3>
+              <p>
+                Provide feedback on completed sessions to help improve the
+                learning experience for others.
+              </p>
+            </div>
+          </div>
+        </div>
+        <button className={styles.learnMoreBtn} onClick={goToLearnMore}>LEARN MORE</button>
+      </section>
+      
+      <section className={styles.joinSection} id="get-started">
+        <div className={styles.getStartedCard}>
+          <h2 className={styles.getStartedTitle}>Ready to Get Started?</h2>
+          <div className={styles.getStartedContent}>
+            <ul className={styles.benefitsList}>
+              <li>
+                <span className={styles.benefitIcon}>✓</span>
+                Connect with mentors in various subjects
+              </li>
+              <li>
+                <span className={styles.benefitIcon}>✓</span>
+                Share your knowledge as a mentor
+              </li>
+              <li>
+                <span className={styles.benefitIcon}>✓</span>
+                Flexible scheduling for sessions
+              </li>
+              <li>
+                <span className={styles.benefitIcon}>✓</span>
+                Join our supportive learning community
+              </li>
+            </ul>
+            <button className={styles.signupBtn} onClick={goToSignup}>JOIN NOW</button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
