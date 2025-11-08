@@ -30,8 +30,8 @@ export default function Home() {
             priority
           />
           <div className={styles.introText}>
-            <h1>Mind<span className={styles.highlightEd}>Mates</span>:</h1>
-            <p>A Peer-Assisted Educational Sessions</p>
+            <h1>CCS<span className={styles.highlightEd}>Pals</span>:</h1>
+            <p>A Peer-Assisted Learning Sessions</p>
           </div>
         </div>
       </main>
