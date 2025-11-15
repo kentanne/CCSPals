@@ -1,18 +1,14 @@
-/* src/app/signup/signup.css */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-/* Reset styles for the signup page only */
-.signup-container,
-.signup-container *,
-.signup-container *::before,
-.signup-container *::after {
+.signupContainer,
+.signupContainer * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: 'Montserrat', sans-serif;
 }
 
-.signup-container {
+.signupContainer {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;
   display: flex;
@@ -22,7 +18,7 @@
   position: relative;
 }
 
-.back-btn {
+.backBtn {
   position: fixed;
   top: 1.5rem;
   left: 1.5rem;
@@ -41,42 +37,42 @@
   z-index: 100;
 }
 
-.back-btn svg {
+.backBtn svg {
   width: 1.2rem;
   height: 1.2rem;
   transition: transform 0.3s ease;
 }
 
-.back-btn:hover {
+.backBtn:hover {
   background: white;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
   transform: translateX(-2px);
 }
 
-.back-btn:hover svg {
+.backBtn:hover svg {
   transform: translateX(-4px);
 }
 
-.header-text {
+.headerText {
   text-align: center;
   margin: 1rem 0;
   max-width: 800px;
 }
 
-.header-text h1 {
+.headerText h1 {
   font-size: 2.5rem;
   font-weight: 700;
   color: #2c3e50;
   margin-bottom: 0.5rem;
 }
 
-.header-text p {
+.headerText p {
   font-size: 1.2rem;
   color: #7f8c8d;
   font-weight: 400;
 }
 
-.join-section {
+.joinSection {
   display: flex;
   justify-content: center;
   gap: 3rem;
@@ -86,7 +82,7 @@
   margin-top: 1.5rem;
 }
 
-.join-card {
+.joinCard {
   width: 350px;
   background: white;
   border-radius: 16px;
@@ -96,24 +92,24 @@
   cursor: pointer;
 }
 
-.join-card:hover {
+.joinCard:hover {
   transform: translateY(-10px);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
-.card-content {
+.cardContent {
   padding: 2rem;
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.role-title {
+.roleTitle {
   text-align: center;
   margin-bottom: 1rem;
 }
 
-.role-title span {
+.roleTitle span {
   display: block;
   font-size: 0.9rem;
   font-weight: 500;
@@ -123,7 +119,7 @@
   margin-bottom: 0.5rem;
 }
 
-.role-title h3 {
+.roleTitle h3 {
   font-size: 1.8rem;
   font-weight: 700;
   color: #2c3e50;
@@ -132,7 +128,7 @@
   letter-spacing: 1px;
 }
 
-.mentor-card .role-title h3 {
+.mentorCard .roleTitle h3 {
   color: #ff7e5f;
 }
 
@@ -149,7 +145,7 @@
   );
 }
 
-.mentor-card .divider {
+.mentorCard .divider {
   background: linear-gradient(
     90deg,
     rgba(255, 126, 95, 0) 0%,
@@ -158,21 +154,21 @@
   );
 }
 
-.card-icon {
+.cardIcon {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 1rem 0;
 }
 
-.card-icon img {
+.cardIcon img {
   width: 230px;
   height: auto;
   object-fit: contain;
   transition: all 0.3s ease;
 }
 
-.join-btn {
+.joinBtn {
   margin-top: auto;
   background: linear-gradient(135deg, #02475e 0%, #037a96 100%);
   color: white;
@@ -188,27 +184,27 @@
   cursor: pointer;
 }
 
-.mentor-card .join-btn {
+.mentorCard .joinBtn {
   background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
 }
 
-.join-btn svg {
+.joinBtn svg {
   width: 20px;
   height: 20px;
   transition: transform 0.3s ease;
 }
 
-.join-btn:hover {
+.joinBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-.join-btn:hover svg {
+.joinBtn:hover svg {
   transform: translateX(3px);
 }
 
 /* Modal Styles */
-.modal-overlay {
+.modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -222,7 +218,7 @@
   padding: 1rem;
 }
 
-.confirmation-modal {
+.confirmationModal {
   background: white;
   padding: 2rem;
   border-radius: 16px;
@@ -233,24 +229,24 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.confirmation-modal h3 {
+.confirmationModal h3 {
   color: #2c3e50;
   margin-bottom: 1.5rem;
 }
 
-.confirmation-modal p {
+.confirmationModal p {
   color: #7f8c8d;
   margin-bottom: 2.5rem;
   line-height: 1.6;
 }
 
-.modal-actions {
+.modalActions {
   display: flex;
   justify-content: center;
   gap: 1rem;
 }
 
-.modal-actions button {
+.modalActions button {
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   font-weight: 600;
@@ -259,103 +255,103 @@
   border: none;
 }
 
-.cancel-btn {
+.cancelBtn {
   background: #e8e6e6;
   color: #7f8c8d;
 }
 
-.cancel-btn:hover {
+.cancelBtn:hover {
   background: #babbbd;
   color: #5d6d7e;
 }
 
-.confirm-btn {
+.confirmBtn {
   background: linear-gradient(135deg, #02475e 0%, #037a96 100%);
   color: white;
 }
 
-.confirm-btn:hover {
+.confirmBtn:hover {
   background: linear-gradient(135deg, #037a96 0%, #02475e 100%);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .header-text h1 {
+  .headerText h1 {
     font-size: 2rem;
   }
 
-  .header-text p {
+  .headerText p {
     font-size: 1rem;
   }
 
-  .join-section {
+  .joinSection {
     flex-direction: column;
     align-items: center;
   }
 
-  .join-card {
+  .joinCard {
     width: 100%;
     max-width: 350px;
   }
 
-  .card-icon img {
+  .cardIcon img {
     width: 200px;
   }
 
-  .back-btn {
+  .backBtn {
     top: 1rem;
     left: 1rem;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
   }
 
-  .confirmation-modal {
+  .confirmationModal {
     padding: 1.75rem;
   }
 
-  .confirmation-modal h3 {
+  .confirmationModal h3 {
     font-size: 1.3rem;
   }
 
-  .confirmation-modal p {
+  .confirmationModal p {
     font-size: 0.95rem;
   }
 }
 
 @media (max-width: 480px) {
-  .header-text {
+  .headerText {
     margin: 2rem 0;
   }
 
-  .header-text h1 {
+  .headerText h1 {
     font-size: 1.8rem;
   }
 
-  .confirmation-modal {
+  .confirmationModal {
     padding: 1.5rem;
   }
 
-  .confirmation-modal h3 {
+  .confirmationModal h3 {
     font-size: 1.2rem;
     margin-bottom: 1rem;
   }
 
-  .confirmation-modal p {
+  .confirmationModal p {
     font-size: 0.9rem;
     margin-bottom: 1.5rem;
   }
 
-  .modal-actions {
+  .modalActions {
     flex-direction: row;
     gap: 0.75rem;
   }
 
-  .modal-actions button {
+  .modalActions button {
     padding: 0.5rem 0.8rem;
     font-size: 0.9rem;
   }
 
-  .back-btn {
+  .backBtn {
     top: 0.8rem;
     left: 0.8rem;
     padding: 0.4rem 0.8rem;

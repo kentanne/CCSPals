@@ -1,21 +1,19 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
+import { useLogin } from '@/hooks/useLogin';
+import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
+import { LOGIN_CONSTANTS } from '@/constants/loginConstants';
 import './login.css';
 
 export default function Login() {
-  const router = useRouter();
-  
   // State declarations
   const [iniCred, setIniCred] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isButtonActive, setIsButtonActive] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState(0);
 
   // Refs
   const iniCredRef = useRef<HTMLInputElement>(null);
@@ -23,13 +21,17 @@ export default function Login() {
   const loginButtonRef = useRef<HTMLButtonElement>(null);
   const forgotPasswordRef = useRef<HTMLAnchorElement>(null);
 
-  // Constants
+  // Custom hooks
+  const { isLoading, error, login, clearError } = useLogin();
+  
   const focusableElements = [
     { ref: iniCredRef, type: 'input' },
     { ref: passwordRef, type: 'input' },
     { ref: loginButtonRef, type: 'button' },
     { ref: forgotPasswordRef, type: 'link' }
   ];
+  
+  const { handleKeyDown, handleElementFocus } = useKeyboardNavigation(focusableElements);
 
   // Event handlers
   const setButtonActive = (active: boolean) => {
@@ -42,98 +44,15 @@ export default function Login() {
     setPasswordVisible(!passwordVisible);
   };
 
-  const focusNextElement = () => {
-    const nextIndex = (focusedIndex + 1) % focusableElements.length;
-    setFocusedIndex(nextIndex);
-    focusableElements[nextIndex].ref.current?.focus();
-  };
-
-  const focusPreviousElement = () => {
-    const prevIndex = focusedIndex === 0 ? focusableElements.length - 1 : focusedIndex - 1;
-    setFocusedIndex(prevIndex);
-    focusableElements[prevIndex].ref.current?.focus();
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
-    switch (e.key) {
-      case 'Tab':
-        e.preventDefault();
-        if (e.shiftKey) {
-          focusPreviousElement();
-        } else {
-          focusNextElement();
-        }
-        break;
-      
-      case 'Enter':
-        if (index === focusableElements.length - 2) {
-          if (!isLoading) {
-            const formEvent = new Event('submit', { cancelable: true, bubbles: true });
-            e.currentTarget.dispatchEvent(formEvent);
-          }
-        } else if (index === focusableElements.length - 1) {
-          forgotPasswordRef.current?.click();
-        }
-        break;
-      
-      case ' ':
-        e.preventDefault();
-        if (index === focusableElements.length - 2) {
-          if (!isLoading) {
-            const formEvent = new Event('submit', { cancelable: true, bubbles: true });
-            e.currentTarget.dispatchEvent(formEvent);
-          }
-        } else if (index === focusableElements.length - 1) {
-          forgotPasswordRef.current?.click();
-        }
-        break;
-      
-      case 'ArrowDown':
-        e.preventDefault();
-        focusNextElement();
-        break;
-      
-      case 'ArrowUp':
-        e.preventDefault();
-        focusPreviousElement();
-        break;
-      
-      case 'Escape':
-        setFocusedIndex(0);
-        iniCredRef.current?.focus();
-        break;
-    }
-  };
-
-  const handleElementFocus = (index: number) => {
-    setFocusedIndex(index);
-  };
-
-  const login = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    await login({ iniCred, password });
+  };
 
-    if (isLoading) return;
-    setIsLoading(true);
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      if (iniCred.includes('admin')) {
-        router.push('/admin');
-      } else if (iniCred.includes('mentor')) {
-        router.push('/mentor');
-      } else if (iniCred.includes('learner')) {
-        router.push('/learner');
-      } else {
-        router.push('/learner');
-      }
-
-      console.log('Login successful - demo mode');
-    } catch (error) {
-      console.error('Login failed:', error);
-      alert('Login failed. Please check your credentials and try again.');
-    } finally {
-      setIsLoading(false);
+  const handleInputChange = () => {
+    // Clear error when user starts typing
+    if (error) {
+      clearError();
     }
   };
 
@@ -159,19 +78,30 @@ export default function Login() {
 
         <div className="main-content">
           <h1>Login</h1>
-          <form onSubmit={login}>
+          
+          {error && (
+            <div className="error-message">
+              <i className="fas fa-exclamation-circle"></i>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin}>
             <div className="input-field">
-              <label htmlFor="iniCred">DOMAIN LOGIN</label>
+              <label htmlFor="iniCred">{LOGIN_CONSTANTS.LABELS.INI_CRED}</label>
               <div className="input-with-icon">
                 <input
                   ref={iniCredRef}
                   id="iniCred"
                   type="text"
                   value={iniCred}
-                  onChange={(e) => setIniCred(e.target.value)}
+                  onChange={(e) => {
+                    setIniCred(e.target.value);
+                    handleInputChange();
+                  }}
                   onKeyDown={(e) => handleKeyDown(e, 0)}
                   onFocus={() => handleElementFocus(0)}
-                  placeholder="Enter your email, username, or Student ID"
+                  placeholder={LOGIN_CONSTANTS.PLACEHOLDERS.INI_CRED}
                   disabled={isLoading}
                   required
                   aria-describedby="iniCred-description"
@@ -179,22 +109,25 @@ export default function Login() {
                 <i className="fas fa-user input-icon"></i>
               </div>
               <span id="iniCred-description" className="sr-only">
-                Enter your email, username, or Student ID
+                {LOGIN_CONSTANTS.DESCRIPTIONS.INI_CRED}
               </span>
             </div>
 
             <div className="input-field">
-              <label htmlFor="password">PASSWORD</label>
+              <label htmlFor="password">{LOGIN_CONSTANTS.LABELS.PASSWORD}</label>
               <div className="input-with-icon">
                 <input
                   ref={passwordRef}
                   id="password"
                   type={passwordVisible ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    handleInputChange();
+                  }}
                   onKeyDown={(e) => handleKeyDown(e, 1)}
                   onFocus={() => handleElementFocus(1)}
-                  placeholder="Enter your password"
+                  placeholder={LOGIN_CONSTANTS.PLACEHOLDERS.PASSWORD}
                   disabled={isLoading}
                   required
                   aria-describedby="password-description"
@@ -212,16 +145,19 @@ export default function Login() {
                   }}
                   tabIndex={0}
                   role="button"
-                  aria-label={passwordVisible ? 'Hide password' : 'Show password'}
+                  aria-label={passwordVisible ? 
+                    LOGIN_CONSTANTS.ARIA_LABELS.PASSWORD_TOGGLE_HIDE : 
+                    LOGIN_CONSTANTS.ARIA_LABELS.PASSWORD_TOGGLE_SHOW
+                  }
                   aria-controls="password"
                 ></i>
               </div>
               <span id="password-description" className="sr-only">
-                Enter your password. Use Tab to navigate to next field.
+                {LOGIN_CONSTANTS.DESCRIPTIONS.PASSWORD}
               </span>
               <p className="switch-link">
                 <a 
-                  href="/auth/forgot-password"
+                  href={LOGIN_CONSTANTS.ROUTES.FORGOT_PASSWORD}
                   ref={forgotPasswordRef}
                   onKeyDown={(e) => handleKeyDown(e, 3)}
                   onFocus={() => handleElementFocus(3)}
@@ -230,6 +166,7 @@ export default function Login() {
                 </a>
               </p>
             </div>
+
             <button
               ref={loginButtonRef}
               type="submit"
@@ -242,10 +179,9 @@ export default function Login() {
               onKeyDown={(e) => handleKeyDown(e, 2)}
               onFocus={() => handleElementFocus(2)}
               disabled={isLoading}
-              {...(isLoading && { 'aria-busy': true } as any)}
             >
               {isLoading && <span className="loading-spinner"></span>}
-              {isLoading ? 'Logging in...' : 'Login'}
+              {isLoading ? LOGIN_CONSTANTS.ARIA_LABELS.LOADING : 'Login'}
             </button>
           </form>
         </div>
@@ -262,6 +198,18 @@ export default function Login() {
           clip: rect(0, 0, 0, 0);
           white-space: nowrap;
           border: 0;
+        }
+
+        .error-message {
+          background: #fee;
+          border: 1px solid #fcc;
+          color: #c33;
+          padding: 12px;
+          border-radius: 4px;
+          margin-bottom: 16px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
       `}</style>
     </div>
