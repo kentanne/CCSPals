@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import styles from '@/app/components/mentorpage/information/information.module.css';
+import styles from '@/components/organisms/forms/MentorEditInformationForm/information.module.css';
 import { OptionItem } from '@/interfaces/editInformation';
 import { normalizeOptionValue, normalizeOptionLabel, toCamelCase } from '@/utils/infoHelpers';
 

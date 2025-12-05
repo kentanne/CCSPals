@@ -31,7 +31,6 @@ export default function Navbar() {
   const hamburgerRef = useRef<HTMLButtonElement | null>(null);
 
   const toggleMenu = () => {
-    console.log('Toggle menu clicked, current state:', isMenuOpen); // Debug
     setIsMenuOpen(!isMenuOpen);
     if (!isMenuOpen) {
       setTimeout(() => {
@@ -248,7 +247,7 @@ export default function Navbar() {
             width={56} 
             height={40}
           />
-          <span>MindMates</span>
+          <span>CCSPals</span>
         </div>
 
         <button

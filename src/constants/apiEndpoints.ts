@@ -10,14 +10,17 @@ export const API_ENDPOINTS = {
   MENTORS: '/learner/mentors',
   LEARNERS: '/mentor/learners',
   FEEDBACKS: '/mentor/feedbacks',
-  FORUM: '/forum/posts',
   ANALYTICS: {
     LEARNER: '/learner/analytics',
     MENTOR: '/mentor/session/analytics'
   },
   AUTH: {
-    SWITCH_ROLE: '/auth/switch-role',
-    LOGOUT: '/auth/logout'
-  },
-  PUSHER_AUTH: '/pusher/auth'
+    LOGIN: '/api/auth/login',
+    LOGOUT: '/api/auth/logout',
+    CHECK: '/api/auth/check',
+    SIGNUP: {
+      LEARNER: '/api/auth/learner/signup',
+      MENTOR: '/api/auth/mentor/signup'
+    }
+  }
 } as const;

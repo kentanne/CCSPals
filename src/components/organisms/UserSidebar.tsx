@@ -1,17 +1,12 @@
 import React from 'react';
-import { UserData, ProgressData, RankData } from '@/interfaces/user';
+import { UserData } from '@/interfaces/user';
 
 interface UserSidebarProps {
   userData: UserData | null;
   role: 'learner' | 'mentor';
-  progressData?: ProgressData;
-  rankData?: RankData | null;
-  rankProgressPct?: number;
   showAllCourses: boolean;
   onToggleAllCourses: () => void;
   onEditInformation: () => void;
-  onRegisterAltRole: () => void;
-  onSwitchRole: () => void;
   onLogout: () => void;
   isMobileView: boolean;
   isSidebarVisible: boolean;
@@ -21,14 +16,9 @@ interface UserSidebarProps {
 export const UserSidebar: React.FC<UserSidebarProps> = ({
   userData,
   role,
-  progressData,
-  rankData,
-  rankProgressPct = 0,
   showAllCourses,
   onToggleAllCourses,
   onEditInformation,
-  onRegisterAltRole,
-  onSwitchRole,
   onLogout,
   isMobileView,
   isSidebarVisible,
@@ -66,44 +56,6 @@ export const UserSidebar: React.FC<UserSidebarProps> = ({
           <i><p>{courseAbbreviation}</p></i>
         </div>
       </div>
-
-      {/* Progress Tracker - Only for Learner */}
-      {role === 'learner' && progressData && (
-        <div className={styles['progress-tracker']}>
-          <h1>Learning Progress</h1>
-          <div className={styles['progress-item']}>
-            <div className={styles['progress-header']}>
-              <span className={styles['progress-title']}>
-                <p className={styles['progress-label']}>Rank:</p>
-                {rankData ? `${rankData.rank}` : 'Sessions Attended'}
-              </span>
-              <span className={styles['progress-percentage']}>
-                {rankData ? `${rankProgressPct}%` : `${Math.round(progressData.progress)}%`}
-              </span>
-            </div>
-            <div className={styles['progress-bar']}>
-              <div 
-                className={styles['progress-fill']}
-                style={{ width: `${rankData ? rankProgressPct : progressData.progress}%` }}
-              ></div>
-            </div>
-            <div className={styles['progress-details']}>
-              <span className={styles['progress-count']}>
-                {rankData
-                  ? (rankData.requiredSessions == null
-                      ? 'Top rank achieved'
-                      : `${rankData.progress} / ${rankData.requiredSessions} sessions` +
-                        (typeof rankData.sessionsToNextRank === 'number'
-                          ? ` • ${rankData.sessionsToNextRank} to next rank`
-                          : '')
-                    )
-                  : `${progressData.sessionsAttended} / ${progressData.totalSessions} sessions`
-                }
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className={styles['footer-element']}>
         <div className={styles.availability}>
@@ -183,13 +135,6 @@ export const UserSidebar: React.FC<UserSidebarProps> = ({
             <div className={styles['account-dropdown-content']}>
               <a onClick={onEditInformation}>
                 <img src="/svg/edit.svg" alt="Edit" /> Edit Information
-              </a>
-              <a onClick={onRegisterAltRole}>
-                <img src="/svg/register.svg" alt="Register" /> 
-                Register as {role === 'learner' ? 'Mentor' : 'Learner'}
-              </a>
-              <a onClick={onSwitchRole}>
-                <img src="/svg/switch.svg" alt="Switch" /> Switch Account Role
               </a>
               <a onClick={onLogout}>
                 <img src="/svg/logout.svg" alt="Logout" /> Logout

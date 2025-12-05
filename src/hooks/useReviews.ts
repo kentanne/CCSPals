@@ -33,7 +33,6 @@ export const useReviews = ({
         : '/api/mentor/feedbacks';
       
       const response = await api.get(endpoint);
-      console.log('Existing feedbacks:', response.data);
       setExistingFeedbacks(response.data);
       return response.data;
     } catch (error: any) {
@@ -51,18 +50,13 @@ export const useReviews = ({
   }, []);
 
   useEffect(() => {
-    console.log("Initial schedules received:", initialSchedules);
-    console.log("Existing feedbacks:", existingFeedbacks);
-    
     if (initialSchedules && initialSchedules.length > 0) {
       const transformedRecords = initialSchedules.map(schedule => 
         transformScheduleToFeedback(schedule, existingFeedbacks, type)
       );
       setRecords(transformedRecords);
-      console.log("Transformed records with feedback:", transformedRecords);
     } else if (initialFeedbacks && initialFeedbacks.length > 0) {
       setRecords(initialFeedbacks);
-      console.log("Using initial feedbacks:", initialFeedbacks);
     }
   }, [initialSchedules, initialFeedbacks, existingFeedbacks, type]);
 

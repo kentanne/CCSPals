@@ -274,6 +274,22 @@
   background: linear-gradient(135deg, #037a96 0%, #02475e 100%);
 }
 
+/* Loading card fallback */
+.loadingCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #2c3e50;
+  font-size: 1rem;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .headerText h1 {

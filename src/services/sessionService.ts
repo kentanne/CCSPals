@@ -1,13 +1,6 @@
 import api from '@/lib/axios';
+import { getCookie } from '@/helpers';
 import { SessionItem } from '@/interfaces/session';
-
-// Helper to get cookie value
-function getCookie(name: string) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift();
-  return null;
-}
 
 export const sessionService = {
   async sendReminder(scheduleId: string | number) {

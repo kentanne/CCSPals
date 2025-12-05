@@ -8,7 +8,6 @@ export const useNavigation = (items: TopbarItem[], defaultActive: string = 'main
   const topbarRef = useRef<HTMLDivElement>(null);
 
   const switchComponent = (component: string) => {
-    console.log('Switching to component:', component);
     if (activeComponent !== component) {
       setActiveComponent(component);
       const newIndex = items.findIndex(item => item.key === component);

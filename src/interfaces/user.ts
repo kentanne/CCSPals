@@ -1,6 +1,5 @@
 export interface RoleData {
   role: string;
-  altRole: string | null;
 }
 
 export interface UserData {
@@ -51,21 +50,6 @@ export interface Schedule {
     feedback: string;
   };
   has_feedback?: boolean;
-}
-
-export interface ForumData {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  authorName: string;
-  createdAt: string;
-  upvotes: number;
-  downvotes: number;
-  commentsCount: number;
-  topics?: string;
-  tags?: string[];
-  userVote?: 'up' | 'down' | null;
 }
 
 export interface ProgressData {

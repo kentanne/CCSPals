@@ -122,3 +122,20 @@ html[data-a11y-motion="reduced"] * {
 html[data-a11y-font="dyslexic"] body {
   font-family: "OpenDyslexic", "Atkinson Hyperlegible", "Arial", "Verdana", sans-serif !important;
 }
+
+/* Lazy loading fallback styles */
+.loadingFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 2rem;
+  color: #666;
+  font-size: 0.95rem;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}

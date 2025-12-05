@@ -64,9 +64,8 @@ export default function ForgotPasswordPage() {
     try {
       const response = await api.post("/api/auth/forgot-password", verificationData);
       if (response.status === 200) {
-        console.log("Password reset link sent:", response.data);
+        notify.success("Password reset link sent!");
       }
-      notify.success("Password reset link sent!");
 
       setSuccess("Password reset link sent!");
       router.push("/auth/login");
