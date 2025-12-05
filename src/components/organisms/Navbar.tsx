@@ -10,7 +10,7 @@ const links: NavItem[] = [
   { name: 'Home', href: '#home' },
   { name: 'Roles', href: '#learners' },
   { name: 'Overview', href: '#how-it-works' },
-  { name: 'Plans', href: '#pricing' },
+  // { name: 'Plans', href: '#pricing' },
   { name: 'Get Started', href: '#get-started' },
 ];
 
@@ -31,7 +31,6 @@ export default function Navbar() {
   const hamburgerRef = useRef<HTMLButtonElement | null>(null);
 
   const toggleMenu = () => {
-    console.log('Toggle menu clicked, current state:', isMenuOpen); // Debug
     setIsMenuOpen(!isMenuOpen);
     if (!isMenuOpen) {
       setTimeout(() => {
@@ -59,7 +58,7 @@ export default function Navbar() {
   const goToLogin = () => {
     setIsLoginClicked(true);
     closeMenu();
-    router.push('/pages/Authentication/loginpage');
+    router.push('/auth/login');
   };
 
   const handleLinkClick = (link: { name: string; href: string; isButton?: boolean }) => {
@@ -210,7 +209,7 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    setIsLoginClicked(pathname === '/pages/Authentication/loginpage');    
+    setIsLoginClicked(pathname === '/auth/login');    
     if (pathname === '/') {
       window.addEventListener('scroll', handleScroll);
       handleScroll();
@@ -248,7 +247,7 @@ export default function Navbar() {
             width={56} 
             height={40}
           />
-          <span>MindMates</span>
+          <span>CCSPals</span>
         </div>
 
         <button
@@ -532,7 +531,7 @@ export default function Navbar() {
         /* Mobile and Tablet Styles */
         @media (max-width: 1023px) {
           .hamburger {
-            display: flex !important; 
+            display: flex !important; /* Force show on mobile */
           }
 
           .header-nav {

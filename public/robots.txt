@@ -1,0 +1,40 @@
+# CCSPals - Robots.txt
+# This file tells search engines which pages to crawl and which to avoid
+
+# Allow all search engines to crawl public pages
+User-agent: *
+Allow: /
+Allow: /auth/login
+Allow: /auth/signup
+Allow: /info/learner
+Allow: /info/mentor
+
+# Disallow private/authenticated pages
+Disallow: /learner
+Disallow: /mentor
+Disallow: /api/
+
+# Disallow authentication endpoints
+Disallow: /auth/forgot-password
+Disallow: /auth/reset-password
+
+# Sitemap location
+Sitemap: https://ccspals.com/sitemap.xml
+
+# Crawl-delay for specific bots (optional - adjust as needed)
+# User-agent: GPTBot
+# Disallow: /
+
+# Google-specific rules
+User-agent: Googlebot
+Allow: /
+Disallow: /learner
+Disallow: /mentor
+Disallow: /api/
+
+# Bing-specific rules
+User-agent: Bingbot
+Allow: /
+Disallow: /learner
+Disallow: /mentor
+Disallow: /api/
