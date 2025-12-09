@@ -29,71 +29,63 @@ function verifyToken(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
-    
-    const { userId, role } = verifyToken(request);
-    
+
+    // Optionally verify authentication if needed
+    // verifyToken(request);
+
     const body = await request.json();
+    console.log('Received schedule data:', body);
+    
     const {
-      learnerId,
-      mentorId,
+      mentorName,
+      learnerName,
       subject,
-      date,
-      time,
-      duration,
       modality,
-      meetingLink,
+      time,
+      date,
       location,
-      notes
     } = body;
 
     // Validate required fields
-    if (!learnerId || !mentorId || !subject || !date || !time || !duration || !modality) {
+    if (!mentorName || !learnerName || !subject || !modality || !time || !date) {
+      console.log('Validation failed:', { mentorName, learnerName, subject, modality, time, date });
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    // Verify users exist
-    const learner = await User.findOne({ userId: learnerId, role: 'learner' });
-    const mentor = await User.findOne({ userId: mentorId, role: 'mentor' });
-
-    if (!learner || !mentor) {
-      return NextResponse.json(
-        { error: 'Learner or mentor not found' },
-        { status: 404 }
-      );
-    }
-
-    // Verify the requester is either the learner or mentor in the schedule
-    if (userId !== learnerId && userId !== mentorId) {
-      return NextResponse.json(
-        { error: 'Unauthorized to create this schedule' },
-        { status: 403 }
-      );
-    }
+    // Default location to 'Online' if not provided
+    const finalLocation = location && location.trim() !== '' ? location : 'Online';
 
     // Create schedule
     const scheduleId = `SCH-${uuidv4().slice(0, 8).toUpperCase()}`;
-    
+
+    console.log('Creating schedule with:', {
+      scheduleId,
+      mentorName,
+      learnerName,
+      subject,
+      modality,
+      time,
+      date,
+      location: finalLocation
+    });
+
     const newSchedule = new Schedule({
       scheduleId,
-      learnerId,
-      learnerName: learner.name || learner.username,
-      mentorId,
-      mentorName: mentor.name || mentor.username,
+      mentorName,
+      learnerName,
       subject,
-      date,
-      time,
-      duration,
       modality,
-      meetingLink: modality === 'online' ? meetingLink : undefined,
-      location: modality !== 'online' ? location : undefined,
+      time,
+      date,
+      location: finalLocation,
       status: 'pending',
-      notes
     });
 
     await newSchedule.save();
+    console.log('Schedule saved successfully:', newSchedule);
 
     return NextResponse.json({
       message: 'Schedule created successfully',
@@ -102,48 +94,62 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     console.error('Create schedule error:', error);
-    
-    if (error.message === 'Authentication required' || error.message === 'Invalid token') {
-      return NextResponse.json({ error: error.message }, { status: 401 });
-    }
-    
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     return NextResponse.json(
-      { error: 'Failed to create schedule' },
+      { error: 'Failed to create schedule', details: error.message },
       { status: 500 }
     );
   }
 }
 
-// GET - Fetch all schedules (admin or general view)
+// GET - Fetch schedules filtered by mentor or learner name
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
     
-    verifyToken(request); // Just verify user is authenticated
+    // Optionally verify authentication if needed
+    // verifyToken(request);
     
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status');
-    const learnerId = searchParams.get('learnerId');
-    const mentorId = searchParams.get('mentorId');
+    const mentorName = searchParams.get('mentorName');
+    const learnerName = searchParams.get('learnerName');
 
     const query: any = {};
-    if (status) query.status = status;
-    if (learnerId) query.learnerId = learnerId;
-    if (mentorId) query.mentorId = mentorId;
+    if (mentorName) query.mentorName = mentorName;
+    if (learnerName) query.learnerName = learnerName;
 
-    const schedules = await Schedule.find(query).sort({ date: -1, time: -1 });
+    const schedules = await Schedule.find(query).sort({ date: 1, time: 1 });
+
+    // Group schedules into today and upcoming
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todaySchedules: any[] = [];
+    const upcomingSchedules: any[] = [];
+
+    schedules.forEach((sched: any) => {
+      const schedDate = new Date(sched.date);
+      schedDate.setHours(0, 0, 0, 0);
+      
+      if (schedDate.getTime() === today.getTime()) {
+        todaySchedules.push(sched);
+      } else if (schedDate.getTime() > today.getTime()) {
+        upcomingSchedules.push(sched);
+      }
+    });
 
     return NextResponse.json({
-      schedules,
+      todaySchedules,
+      upcomingSchedules,
       total: schedules.length
     });
 
   } catch (error: any) {
     console.error('Get schedules error:', error);
-    
-    if (error.message === 'Authentication required' || error.message === 'Invalid token') {
-      return NextResponse.json({ error: error.message }, { status: 401 });
-    }
     
     return NextResponse.json(
       { error: 'Failed to fetch schedules' },

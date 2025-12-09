@@ -3,14 +3,14 @@ import mongoose, { Schema, Model } from 'mongoose';
 export interface ISchedule {
   _id?: string;
   scheduleId: string;
-  learnerId: string;
+  learnerId?: string;
   learnerName: string;
-  mentorId: string;
+  mentorId?: string;
   mentorName: string;
   subject: string;
   date: string;
   time: string;
-  duration: string;
+  duration?: string;
   modality: string;
   meetingLink?: string;
   location?: string;
@@ -23,14 +23,14 @@ export interface ISchedule {
 const ScheduleSchema = new Schema<ISchedule>(
   {
     scheduleId: { type: String, required: true, unique: true },
-    learnerId: { type: String, required: true },
+    learnerId: { type: String },
     learnerName: { type: String, required: true },
-    mentorId: { type: String, required: true },
+    mentorId: { type: String },
     mentorName: { type: String, required: true },
     subject: { type: String, required: true },
     date: { type: String, required: true },
     time: { type: String, required: true },
-    duration: { type: String, required: true },
+    duration: { type: String },
     modality: { 
       type: String, 
       enum: ['online', 'in-person', 'hybrid'],
@@ -50,6 +50,11 @@ const ScheduleSchema = new Schema<ISchedule>(
   }
 );
 
-const Schedule: Model<ISchedule> = mongoose.models.Schedule || mongoose.model<ISchedule>('Schedule', ScheduleSchema);
+// Clear cached model to ensure schema changes take effect
+if (mongoose.models.Schedule) {
+  delete mongoose.models.Schedule;
+}
+
+const Schedule: Model<ISchedule> = mongoose.model<ISchedule>('Schedule', ScheduleSchema);
 
 export default Schedule;

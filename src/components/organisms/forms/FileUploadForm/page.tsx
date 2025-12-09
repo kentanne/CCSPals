@@ -6,7 +6,12 @@ import notify from '@/lib/toast';
 import { getCookie } from '@/helpers';
 import styles from './files.module.css';
 
-export default function FilesComponent() {
+interface FilesComponentProps {
+  files?: any[];
+  setFiles?: (files: any[]) => void;
+}
+
+export default function FilesComponent({ files = [], setFiles }: FilesComponentProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);
 
@@ -53,28 +58,47 @@ export default function FilesComponent() {
   const clearQueue = () => setPendingFiles([]);
 
   const uploadFiles = async () => {
-    const MindMateToken = getCookie('MindMateToken');
-
     if (pendingFiles.length === 0) {
       notify.warn('Please choose at least one file to upload');
       return;
     }
 
-    const form = new FormData();
-    pendingFiles.forEach(f => form.append('files', f));
-
     try {
       setUploading(true);
-      const res = await api.post('/api/mentor/files/upload', form, {
-        withCredentials: true,
-        headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${MindMateToken}` },
-      });
-      if (res.status >= 200 && res.status < 300) {
-        notify.success('Files uploaded successfully');
-        setPendingFiles([]);
-      } else {
-        notify.error(res.data?.message || 'Upload failed');
+      
+      // Simulate upload and add files to file manager
+      const newFiles = pendingFiles.map((file, index) => ({
+        id: Date.now() + index,
+        name: file.name,
+        file_name: file.name,
+        size: bytesToSize(file.size),
+        date: new Date().toISOString().split('T')[0],
+        file_id: `FILE-${Date.now()}-${index}`,
+        owner_id: 'current-user'
+      }));
+
+      // Add to file manager
+      if (setFiles) {
+        setFiles([...files, ...newFiles]);
       }
+
+      notify.success('Files uploaded successfully');
+      setPendingFiles([]);
+      
+      // Original API implementation (disabled for mock data)
+      // const MindMateToken = getCookie('MindMateToken');
+      // const form = new FormData();
+      // pendingFiles.forEach(f => form.append('files', f));
+      // const res = await api.post('/api/mentor/files/upload', form, {
+      //   withCredentials: true,
+      //   headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${MindMateToken}` },
+      // });
+      // if (res.status >= 200 && res.status < 300) {
+      //   notify.success('Files uploaded successfully');
+      //   setPendingFiles([]);
+      // } else {
+      //   notify.error(res.data?.message || 'Upload failed');
+      // }
     } catch (e: any) {
       console.error('Upload error:', e?.response?.data || e.message);
       notify.error(e?.response?.data?.message || 'Upload failed');

@@ -1,10 +1,5 @@
 import { Metadata } from 'next';
-import dynamic from 'next/dynamic';
-
-const MentorInfoForm = dynamic(() => import('@/components/organisms/forms/MentorInfoForm/page'), {
-  loading: () => <div style={{ padding: '2rem', textAlign: 'center' }}>Loading form...</div>,
-  ssr: false
-});
+import MentorInfoFormClientLoader from '@/components/organisms/forms/MentorInfoForm/ClientLoader';
 
 export const metadata: Metadata = {
   title: 'Mentor Information - CCSPals',
@@ -30,5 +25,5 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default function MentorInfoPage() {
-  return <MentorInfoForm />;
+  return <MentorInfoFormClientLoader />;
 }

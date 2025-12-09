@@ -103,46 +103,123 @@
 }
 
 .today-card,
-.upcomming-card {
+.upcomming-card,
+.sessionTodayCard,
+.sessionUpcomingCard {
   display: flex;
   flex-direction: column;
-  padding: 0.5rem 0.9rem;
-  background-color: #e4f3f5;
-  border-radius: 8px;
-  margin-bottom: 0.8rem;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  margin-bottom: 1rem;
   transition: all 0.3s ease;
   border-left: 5px solid var(--primary);
   max-width: 100%;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(0);
   flex-shrink: 0;
+  gap: 0.75rem;
 }
 
 .today-card:hover,
-.upcomming-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 4px 6px 12px rgba(0, 0, 0, 0.2);
+.upcomming-card:hover,
+.sessionTodayCard:hover,
+.sessionUpcomingCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   z-index: 10;
 }
 
+.sessionTodayCard:nth-of-type(4n + 1),
 .today-card:nth-of-type(4n + 1) {
   border-left: 5px solid #ff3131;
 }
 
+.sessionTodayCard:nth-of-type(4n + 2),
 .today-card:nth-of-type(4n + 2) {
   border-left: 5px solid #ff66c4;
 }
 
+.sessionTodayCard:nth-of-type(4n + 3),
 .today-card:nth-of-type(4n + 3) {
   border-left: 5px solid #ffe063;
 }
 
+.sessionTodayCard:nth-of-type(4n),
 .today-card:nth-of-type(4n) {
   border-left: 5px solid #ff914d;
 }
 
+.sessionUpcomingCard,
 .upcomming-card {
   border-left: 5px solid #006981;
+}
+
+.sessionCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.sessionTitleContainer {
+  flex: 1;
+  min-width: 0;
+}
+
+.sessionTitleContainer h1 {
+  color: var(--text-dark);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sessionHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.sessionJoinBtn,
+.sessionFilesBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem;
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sessionJoinBtn:hover,
+.sessionFilesBtn:hover {
+  transform: scale(1.1);
+}
+
+.sessionEllipsisContainer {
+  position: relative;
+}
+
+.sessionInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+
+.sessionInfo h2,
+.sessionInfo p {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-dark);
+  font-weight: 500;
 }
 
 .card-header {
@@ -295,10 +372,14 @@
 }
 
 .no-sessions {
-  padding: 2rem;
+  padding: 3rem 2rem;
   text-align: center;
-  color: #666;
+  color: #999;
   font-style: italic;
+  font-size: 1.1rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 2px dashed #ddd;
 }
 
 .modal-overlay {

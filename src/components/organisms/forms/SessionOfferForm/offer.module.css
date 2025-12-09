@@ -240,30 +240,31 @@
 }
 
 .offerModeBtn:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
-  background-color: #f8f9fa;
-  color: #6c757d;
-  border-color: #e9ecef;
+  background-color: #e9ecef;
+  color: #495057;
+  border-color: #ced4da;
 }
 
 .offerModeBtn:disabled:hover {
-  background-color: #f8f9fa;
-  border-color: #e9ecef;
-  color: #6c757d;
+  background-color: #e9ecef;
+  border-color: #ced4da;
+  color: #495057;
   transform: none;
 }
 
 .offerModeActive {
   background-color: #0b3b44;
-  color: white;
+  color: #ffffff !important;
   border-color: #0b3b44;
+  font-weight: 700;
 }
 
 .offerModeActive:hover {
   background-color: #0a2e34;
   border-color: #0a2e34;
-  color: white;
+  color: #ffffff !important;
 }
 
 .offerModeActive:active {
@@ -489,13 +490,14 @@
 
 .offerDaySelected {
   background-color: #0b3b44;
-  color: white;
+  color: #ffffff !important;
   border-color: #0b3b44;
+  font-weight: 700;
 }
 
 .offerDaySelected:hover {
   background-color: #0a2e34;
-  color: white;
+  color: #ffffff !important;
 }
 
 .offerDayAvailable {

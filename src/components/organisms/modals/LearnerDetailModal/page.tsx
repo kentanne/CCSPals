@@ -2,14 +2,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Offer, { OfferInfo } from '../offer/page';
+import Offer, { OfferInfo } from '@/components/organisms/forms/SessionOfferForm/page';
 import styles from './view.module.css';
 import api from '@/lib/axios';
 
 interface ViewUserProps {
   userId: string;
   mentorData: any;
+  userData?: any;
   onClose: () => void;
+  createSchedule: (data: any) => Promise<any>;
 }
 
 interface UserInfo {
@@ -32,7 +34,7 @@ interface UserInfo {
   rank?: string; // <-- added
 }
 
-export default function ViewUser({ userId, mentorData, onClose }: ViewUserProps) {
+export default function ViewUser({ userId, mentorData, userData, onClose, createSchedule }: ViewUserProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
@@ -100,6 +102,7 @@ export default function ViewUser({ userId, mentorData, onClose }: ViewUserProps)
   };
 
   const confirmSendOffer = () => {
+    console.log('LearnerDetailModal - createSchedule available?', typeof createSchedule, createSchedule);
     setShowConfirmationModal(false);
     setShowOffer(true);
   };
@@ -313,6 +316,18 @@ export default function ViewUser({ userId, mentorData, onClose }: ViewUserProps)
               </div>
             </div>
           </div>
+        )}
+
+        {/* Offer/Scheduling Modal */}
+        {showOffer && offerInfo && createSchedule && (
+          <Offer
+            info={offerInfo}
+            mentorId={mentorData?.id || mentorData?._id || ''}
+            userData={userData}
+            onClose={() => setShowOffer(false)}
+            onConfirm={handleOfferConfirm}
+            createSchedule={createSchedule}
+          />
         )}
 
       </div>

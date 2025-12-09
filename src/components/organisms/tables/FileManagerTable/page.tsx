@@ -34,6 +34,7 @@ export default function FileManagerComponent({ files: propFiles, setFiles }: Fil
   const [showTypeFilter, setShowTypeFilter] = useState(false);
 
   const typeFilterRef = useRef<HTMLDivElement>(null);
+  const initializedRef = useRef(false);
 
   // Add: simplify MIME/extension to friendly label
   function simplifyMimeType(mime?: string, name?: string): string {
@@ -88,7 +89,9 @@ export default function FileManagerComponent({ files: propFiles, setFiles }: Fil
       const res = await api.get('/api/mentor/files', { withCredentials: true });
       const list = processFiles(res.data?.files || []);
       setFilesState(list);
-      setFiles(list);
+      if (setFiles) {
+        setFiles(list);
+      }
       // ensure compatibility with older TS targets by converting Set -> Array
       const types = ['all', ...Array.from(new Set(list.map((file) => (file.File_type || 'Unknown'))))];
       setUniqueFileTypes(types);
@@ -98,7 +101,28 @@ export default function FileManagerComponent({ files: propFiles, setFiles }: Fil
     }
   };
 
-  useEffect(() => { loadFromServer(); }, []);
+  useEffect(() => {
+    // Only initialize once or when propFiles truly changes
+    if (initializedRef.current) {
+      return;
+    }
+    
+    initializedRef.current = true;
+    
+    // If parent provided files (mock mode), prefer that; otherwise fetch from server
+    if (propFiles && Array.isArray(propFiles) && propFiles.length > 0) {
+      const list = processFiles(propFiles as any[]);
+      setFilesState(list);
+      if (setFiles) {
+        setFiles(list);
+      }
+      const types = ['all', ...Array.from(new Set(list.map((file) => (file.File_type || 'Unknown'))))];
+      setUniqueFileTypes(types);
+    } else {
+      loadFromServer();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -195,7 +219,9 @@ export default function FileManagerComponent({ files: propFiles, setFiles }: Fil
       if (res.status === 200) {
         const updated = files.filter((f) => f.id !== file.id);
         setFilesState(updated);
-        setFiles(updated);
+        if (setFiles) {
+          setFiles(updated);
+        }
         notify.success('File deleted');
       } else {
         notify.error(res.data?.message || 'Failed to delete file');

@@ -9,6 +9,8 @@ interface ViewUserProps {
   user: any;
   onClose: () => void;
   isOpen: boolean;
+  userData?: any;
+  createSchedule?: (schedule: any) => Promise<any>;
 }
 
 interface UserInfo {
@@ -30,7 +32,7 @@ interface UserInfo {
   id: string;
 }
 
-export default function ViewUser({ user, onClose, isOpen }: ViewUserProps) {
+export default function ViewUser({ user, onClose, isOpen, userData, createSchedule }: ViewUserProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showSchedule, setShowSchedule] = useState(false);
@@ -366,8 +368,11 @@ export default function ViewUser({ user, onClose, isOpen }: ViewUserProps) {
           <div className={styles.popupOverlay}>
             <Schedule
               info={userDeetsForSched}
+              userData={userData}
+              role="learner"
               onClose={() => setShowSchedule(false)}
               onConfirm={handleScheduleConfirm}
+              createSchedule={createSchedule || (async () => { throw new Error('createSchedule not provided'); })}
             />
           </div>
         )}

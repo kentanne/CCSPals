@@ -10,16 +10,33 @@ export const reviewService = {
     comments: string, 
     type: 'learner' | 'mentor'
   ) {
-    if (type === 'learner') {
-      const response = await api.post(`/api/learner/feedback/${scheduleId}`, {
-        schedule: scheduleId,
-        rating: rating,
-        comments: comments
-      });
-      return response.data;
-    }
-    // Add mentor feedback submission if needed
-    throw new Error('Mentor feedback submission not implemented');
+    // Mock implementation - simulate successful submission
+    // In a real app, this would call the API
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          success: true,
+          message: 'Feedback submitted successfully',
+          feedbackId: `FB-${Date.now()}`,
+          scheduleId,
+          mentorId,
+          rating,
+          comments,
+          createdAt: new Date().toISOString()
+        });
+      }, 500); // Simulate network delay
+    });
+    
+    // Original API implementation (disabled for mock data)
+    // if (type === 'learner') {
+    //   const response = await api.post(`/api/learner/feedback/${scheduleId}`, {
+    //     schedule: scheduleId,
+    //     rating: rating,
+    //     comments: comments
+    //   });
+    //   return response.data;
+    // }
+    // throw new Error('Mentor feedback submission not implemented');
   },
 
   async updateRecord(

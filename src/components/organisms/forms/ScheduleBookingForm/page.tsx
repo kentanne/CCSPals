@@ -1,15 +1,16 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import api from '@/lib/axios';
 import notify from '@/lib/toast';
-import { getCookie } from '@/helpers';
 import styles from './Schedule.module.css';
 
 interface ScheduleProps {
   info: any;
+  userData: any; // Current user's data (learner or mentor)
+  role: 'learner' | 'mentor'; // Role of current user
   onClose: () => void;
   onConfirm: (data: any) => void;
+  createSchedule: (schedule: any) => Promise<any>; // Function from useScheduleManager
 }
 
 interface Day {
@@ -21,7 +22,7 @@ interface Day {
   isPast: boolean;
 }
 
-export default function Schedule({ info, onClose, onConfirm }: ScheduleProps) {
+export default function Schedule({ info, userData, role, onClose, onConfirm, createSchedule }: ScheduleProps) {
   // State declarations in same order as first component
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -230,34 +231,34 @@ export default function Schedule({ info, onClose, onConfirm }: ScheduleProps) {
     const formattedTime = `${String(h).padStart(2, '0')}:${minutes}`;
 
     const scheduleDate = new Date(selectedDate);
+    
+    // Determine who is the learner and who is the mentor
+    const currentUserName = userData?.name || userData?.username || '';
+    const otherPersonName = mentorName || '';
+    
     const scheduleData = {
-      date: scheduleDate.toISOString(),
+      mentorName: role === 'mentor' ? currentUserName : otherPersonName,
+      learnerName: role === 'learner' ? currentUserName : otherPersonName,
+      date: scheduleDate.toISOString().split('T')[0], // YYYY-MM-DD format
       time: formattedTime,
-      location: sessionType === 'in-person' ? meetingLocation : 'online',
+      location: sessionType === 'in-person' ? meetingLocation : 'Online',
       subject: selectedSubject,
+      modality: sessionType,
     };
+
+    console.log('ScheduleBookingForm - Sending schedule data:', scheduleData);
+    console.log('ScheduleBookingForm - Current user:', { userData, role });
+    console.log('ScheduleBookingForm - Other person:', { mentorName });
 
     setIsSubmitting(true);
     try {
-      const token = getCookie('MindMateToken');
-      const response = await api.post(`/api/learner/schedule/${mentorId}`, scheduleData, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
-
-      if (response.status !== 201) {
-        throw new Error('Failed to create schedule');
-      }
-      
+      const result = await createSchedule(scheduleData);
       notify.success('Session scheduled successfully!');
-      onConfirm(response.data);
+      onConfirm(result);
       onClose();
     } catch (error: any) {
       console.error("Error scheduling:", error);
-      notify.error(error?.response?.data?.message || 'Failed to create schedule');
+      notify.error(error?.message || 'Failed to create schedule');
     } finally {
       setIsSubmitting(false);
     }

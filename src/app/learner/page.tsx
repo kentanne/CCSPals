@@ -30,9 +30,9 @@ import { useNavigation } from '@/hooks/useNavigation';
 import { useMobileView } from '@/hooks/useMobileView';
 import { useUserData } from '@/hooks/useUserData';
 import { useMentors } from '@/hooks/useMentors';
-import { useSchedules } from '@/hooks/useSchedules';
+import { useScheduleManager } from '@/hooks/useScheduleManager';
 import { authService } from '@/services/authService';
-import { transformSchedulesForReview, normalizeSchedulesForSession } from '@/utils/transformers';
+import { normalizeSchedulesForSession } from '@/utils/transformers';
 import { useDatePopup, getCurrentDateTime } from '@/utils/dateUtils';
 import { LEARNER_TOPBAR_ITEMS } from '@/constants/navigation';
 import { LoadingSpinner } from '@/components/atoms/LoadingSpinner';
@@ -64,14 +64,17 @@ export default function LearnerPage() {
   
   // Use custom hooks for data fetching
   const { transformedMentors, isLoading: mentorsLoading, error: mentorsError, refetch: refetchMentors } = useMentors();
-  const { 
-    todaySchedule, 
-    upcomingSchedule, 
-    schedForReview, 
-    isLoading: schedulesLoading, 
+  
+  // Use schedule manager for learner
+  const userName = userData?.name || userData?.username || '';
+  const {
+    todaySchedules,
+    upcomingSchedules,
+    loading: schedulesLoading,
     error: schedulesError,
-    refetch: refetchSchedules 
-  } = useSchedules('learner');
+    fetchSchedules,
+    createSchedule
+  } = useScheduleManager(userName, 'learner');
   
   const [mentorFiles, setMentorFiles] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -83,7 +86,7 @@ export default function LearnerPage() {
 
   // Refetch function to refresh all data
   const refetchData = async () => {
-    await Promise.all([refetchMentors(), refetchSchedules()]);
+    await Promise.all([refetchMentors(), fetchSchedules()]);
   };
 
   const filteredUsers = transformedMentors.filter((user) => {
@@ -111,9 +114,8 @@ export default function LearnerPage() {
   };
 
   const renderComponent = () => {
-    const transformedSchedForReview = transformSchedulesForReview(schedForReview);
-    const sessionSchedule = normalizeSchedulesForSession(todaySchedule);
-    const sessionUpcoming = normalizeSchedulesForSession(upcomingSchedule);
+    const sessionSchedule = normalizeSchedulesForSession(todaySchedules);
+    const sessionUpcoming = normalizeSchedulesForSession(upcomingSchedules);
     const sessionMentFiles = {
       files: (mentorFiles || []).map(f => ({
         id: Number(f.id) || 0,
@@ -128,9 +130,9 @@ export default function LearnerPage() {
       userData,
       upcomingSchedule: sessionUpcoming,
       schedule: sessionSchedule,
-      schedForReview: schedForReview,
       mentFiles: sessionMentFiles,
-      onScheduleCreated: refetchData 
+      onScheduleCreated: refetchData,
+      createSchedule
     };
 
     switch (activeComponent) {
@@ -142,17 +144,111 @@ export default function LearnerPage() {
             schedule={sessionSchedule}
             upcomingSchedule={sessionUpcoming}
             mentFiles={sessionMentFiles}
-            schedForReview={transformedSchedForReview}
             userInformation={filteredUsers}
             userData={userData}
           />
         );
       case 'records':
+        // Mock data for learner reviews
+        const mockSchedulesForReview = [
+          {
+            id: '1',
+            subject: 'Data Structures and Algorithms',
+            date: '2024-11-28',
+            time: '10:00 AM',
+            location: 'Online - Zoom',
+            mentor: {
+              id: 'M001',
+              name: 'Kent Ann Ecal',
+              program: 'Bachelor of Science in Computer Science (BSCS)',
+              yearLevel: '4th Year',
+              image: 'https://placehold.co/100x100'
+            },
+            mentorId: 'M001',
+            scheduleId: 'SCH001',
+            has_feedback: false
+          },
+          {
+            id: '2',
+            subject: 'Web Development',
+            date: '2024-11-25',
+            time: '2:00 PM',
+            location: 'Room 305',
+            mentor: {
+              id: 'M002',
+              name: 'Maverick Lance Coronel',
+              program: 'Bachelor of Science in Information Technology (BSIT)',
+              yearLevel: '3rd Year',
+              image: 'https://placehold.co/100x100'
+            },
+            mentorId: 'M002',
+            scheduleId: 'SCH002',
+            rating: 5,
+            comment: 'Excellent mentor! Very patient and knowledgeable. Helped me understand React hooks clearly.',
+            has_feedback: true
+          },
+          {
+            id: '3',
+            subject: 'Database Management',
+            date: '2024-11-20',
+            time: '1:00 PM',
+            location: 'Online - Google Meet',
+            mentor: {
+              id: 'M003',
+              name: 'Vincent David Ong',
+              program: 'Bachelor of Science in Computer Science (BSCS)',
+              yearLevel: '4th Year',
+              image: 'https://placehold.co/100x100'
+            },
+            mentorId: 'M003',
+            scheduleId: 'SCH003',
+            rating: 4,
+            comment: 'Great session on SQL queries. Would recommend!',
+            has_feedback: true
+          },
+          {
+            id: '4',
+            subject: 'Python Programming',
+            date: '2024-11-15',
+            time: '3:30 PM',
+            location: 'Library Study Room 2',
+            mentor: {
+              id: 'M004',
+              name: 'Paulo Cordova',
+              program: 'Bachelor of Science in Information Technology (BSIT)',
+              yearLevel: '3rd Year',
+              image: 'https://placehold.co/100x100'
+            },
+            mentorId: 'M004',
+            scheduleId: 'SCH004',
+            has_feedback: false
+          },
+          {
+            id: '5',
+            subject: 'Object-Oriented Programming',
+            date: '2024-11-10',
+            time: '11:00 AM',
+            location: 'Online - MS Teams',
+            mentor: {
+              id: 'M005',
+              name: 'Rosary Jane Garcia',
+              program: 'Bachelor of Science in Computer Science (BSCS)',
+              yearLevel: '4th Year',
+              image: 'https://placehold.co/100x100'
+            },
+            mentorId: 'M005',
+            scheduleId: 'SCH005',
+            rating: 5,
+            comment: 'Best tutor I\'ve had! Made OOP concepts so easy to understand. Highly recommended.',
+            has_feedback: true
+          }
+        ];
+        
         return (
           <ReviewsComponent
-            schedForReview={schedForReview}
             userData={userData}
-            data={{ schedForReview: schedForReview }}
+            schedForReview={mockSchedulesForReview}
+            data={{ schedForReview: mockSchedulesForReview }}
           />
         );
       default:

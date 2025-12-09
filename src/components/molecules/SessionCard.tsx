@@ -1,5 +1,5 @@
 import { SessionItem } from '@/interfaces/session';
-import { FontAwesomeIcon, faUser, faCalendarAlt, faClock, faMapMarkerAlt, faVideo, faFileAlt } from '@/components/atoms/SessionIcons';
+import { FontAwesomeIcon, faUser, faCalendarAlt, faClock, faMapMarkerAlt, faFileAlt } from '@/components/atoms/SessionIcons';
 import PopupMenu from './PopupMenu';
 import { formatDate, formatTime, isOnlineSession } from '@/utils/sessionUtils';
 
@@ -49,15 +49,7 @@ export default function SessionCard({
           <h1>{item.subject}</h1>
         </div>
         <div className={styles.sessionHeaderActions}>
-          {canJoinMeeting && onJoinMeeting && type === 'today' && (
-            <button
-              className={styles.sessionJoinBtn}
-              onClick={(e) => onJoinMeeting(item.id, e)}
-              title="Join Online Meeting"
-            >
-              <FontAwesomeIcon icon={faVideo} style={{ color: '#4CAF50', fontSize: '1.5rem' }} />
-            </button>
-          )}
+          {/* Video meet link removed per request - no join button shown */}
           
           {userType === 'learner' && onOpenFiles && (
             <button

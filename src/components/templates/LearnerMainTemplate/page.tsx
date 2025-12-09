@@ -19,12 +19,16 @@ interface MainComponentProps {
   userInformation: User[];
   schedule?: any;
   upcomingSchedule?: any;
+  userData?: any;
+  createSchedule?: (schedule: any) => Promise<any>;
 }
 
 export default function MainComponent({ 
   userInformation = [], 
   schedule, 
-  upcomingSchedule 
+  upcomingSchedule,
+  userData,
+  createSchedule
 }: MainComponentProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState<User[]>(userInformation);
@@ -300,6 +304,8 @@ export default function MainComponent({
             user={selectedUser}
             onClose={handleCloseViewUser}
             isOpen={showViewUser}
+            userData={userData}
+            createSchedule={createSchedule}
           />
         </div>
       )}

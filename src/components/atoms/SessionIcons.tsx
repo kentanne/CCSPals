@@ -1,4 +1,3 @@
-// Just re-export FontAwesomeIcon and icons for convenience
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faCalendar, 

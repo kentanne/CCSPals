@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import styles from './reviews.module.css';
+import '../LearnerReviewsTable/ReviewsComponent.css';
 import api from '@/lib/axios';
 import { ReviewsComponentProps } from '@/interfaces/reviews';
 import StarRating from '@/components/atoms/StarRating';
@@ -96,44 +97,53 @@ export default function ReviewsComponent({ feedbacks = [] }: ReviewsComponentPro
       </div>
 
       {isFeedback && recordView && (
-        <div className={styles.reviewsModalOverlay} onClick={closeFeedback}>
-          <div className={styles.reviewsModalContent} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.reviewsModalHeader}>
-              <div className={styles.reviewsHeaderContent}>
-                <svg className={styles.reviewsModalIcon} viewBox="0 0 24 24" width="20" height="20">
+        <div className={`${styles.reviewsModalOverlay} modal-overlay`} onClick={closeFeedback}>
+          <div className={`${styles.reviewsModalContent} modal-content`} onClick={(e) => e.stopPropagation()}>
+            <div className={`${styles.reviewsModalHeader} modal-header`}>
+              <div className={`${styles.reviewsHeaderContent} header-content`}>
+                <svg className={`${styles.reviewsModalIcon} modal-icon`} viewBox="0 0 24 24" width="20" height="20">
                   <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
                 </svg>
-                <h3>Feedback Details</h3>
+                <h3>Feedback</h3>
               </div>
-              <button className={styles.reviewsCloseBtn} onClick={closeFeedback}>
+              <button className={`${styles.reviewsCloseBtn} close-btn`} onClick={closeFeedback} aria-label="Close feedback">
                 <svg viewBox="0 0 24 24" width="20" height="20">
                   <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                 </svg>
               </button>
             </div>
 
-            <div className={styles.reviewsModalBody}>
+            <div className={`${styles.reviewsModalBody} modal-body`}>
               <ReviewerInfo
                 reviewer={recordView.reviewer}
                 subject={recordView.subject || recordView.reviewer?.course}
                 date={recordView.date}
-                location={recordView.location}
                 type="learner"
               />
 
-              <div className={styles.reviewsFeedbackSection}>
-                <div className={styles.reviewsFeedbackCard}>
-                  <h5>Rating</h5>
-                  <div className={styles.reviewsRatingDisplay}>
+              <div className={`${styles.reviewsFeedbackSection} feedback-section`}>
+                <div className={`${styles.reviewsFeedbackCard} feedback-card`}>
+                  <h5>
+                    <svg viewBox="0 0 24 24" width="16" height="16" style={{ marginRight: '0.5rem' }}>
+                      <path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                    Rating
+                  </h5>
+                  <div className="rating-stars">
                     <StarRating rating={recordView.rating} size="medium" />
-                    <span className={styles.reviewsRatingText}>({recordView.rating}/5)</span>
                   </div>
+                  <div className="current-rating">{recordView.rating} / 5</div>
                 </div>
 
-                <div className={styles.reviewsFeedbackCard}>
-                  <h5>Feedback</h5>
-                  <div className={styles.reviewsFeedbackContent}>
-                    <p>{recordView.comment || "No feedback provided"}</p>
+                <div className={`${styles.reviewsFeedbackCard} feedback-card`}>
+                  <h5>
+                    <svg viewBox="0 0 24 24" width="16" height="16" style={{ marginRight: '0.5rem' }}>
+                      <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                    Feedback
+                  </h5>
+                  <div className="reviewsFeedbackContent reviewsFeedbackContent--shared">
+                    <p>{recordView.comment || 'No feedback provided'}</p>
                   </div>
                 </div>
               </div>

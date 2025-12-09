@@ -38,8 +38,7 @@ import { useNavigation } from '@/hooks/useNavigation';
 import { useMobileView } from '@/hooks/useMobileView';
 import { useUserData } from '@/hooks/useUserData';
 import { useLearners } from '@/hooks/useLearners';
-import { useSchedules } from '@/hooks/useSchedules';
-import { useFeedbacks } from '@/hooks/useFeedbacks';
+import { useScheduleManager } from '@/hooks/useScheduleManager';
 import { authService } from '@/services/authService';
 import { normalizeSchedulesForSession } from '@/utils/transformers';
 import { useDatePopup, getCurrentDateTime } from '@/utils/dateUtils';
@@ -69,26 +68,33 @@ export default function MentorPage() {
   
   // Use custom hooks for data fetching
   const { learners: users, isLoading: learnersLoading, error: learnersError, refetch: refetchLearners } = useLearners();
-  const { 
-    todaySchedule, 
-    upcomingSchedule, 
-    isLoading: schedulesLoading, 
+  
+  // Use schedule manager for mentor
+  const userName = userData?.name || '';
+  const {
+    todaySchedules,
+    upcomingSchedules,
+    loading: schedulesLoading,
     error: schedulesError,
-    refetch: refetchSchedules 
-  } = useSchedules('mentor');
-  const { feedbacks, isLoading: feedbacksLoading, error: feedbacksError, refetch: refetchFeedbacks } = useFeedbacks();
+    fetchSchedules,
+    createSchedule
+  } = useScheduleManager(userName, 'mentor');
+  
+  console.log('MentorPage - userName:', userName);
+  console.log('MentorPage - createSchedule from hook:', typeof createSchedule, createSchedule);
+  
   const [files, setFiles] = useState<any[]>([]);
   const [showAllCourses, setShowAllCourses] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showEditInformation, setShowEditInformation] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const isLoading = learnersLoading || schedulesLoading || feedbacksLoading || userLoading;
-  const apiError = learnersError || schedulesError || feedbacksError;
+  const isLoading = learnersLoading || schedulesLoading || userLoading;
+  const apiError = learnersError || schedulesError;
 
   // Refetch function to refresh all data
   const refetchData = async () => {
-    await Promise.all([refetchLearners(), refetchSchedules(), refetchFeedbacks()]);
+    await Promise.all([refetchLearners(), fetchSchedules()]);
   };
 
   const subjects = userData?.subjects || [];
@@ -106,36 +112,14 @@ export default function MentorPage() {
     );
   });
 
-  const getFiles = async () => {
-    try {
-      const mockFiles = [
-        { id: 1, name: "Mathematics_Notes.pdf", size: "2.4 MB", date: "2024-01-10" },
-        { id: 2, name: "Programming_Exercises.zip", size: "5.1 MB", date: "2024-01-08" },
-      ];
-      setFiles(mockFiles);
-    } catch (error) {
-      console.error("Error fetching files:", error);
-    }
-  };
-
   useEffect(() => {
     if (userData) {
-      getFiles();
+      // Files will be loaded by FileManagerComponent from the server
     }
   }, [userData]);
 
   const toggleShowAllCourses = () => {
     setShowAllCourses(!showAllCourses);
-  };
-
-  const handleLogout = async () => {
-    setShowLogoutModal(false);
-    try {
-      await authService.logout();
-      router.replace('/auth/login');
-    } catch (error) {
-      // Error handled in authService
-    }
   };
 
   const cancelLogout = () => setShowLogoutModal(false);
@@ -168,8 +152,20 @@ export default function MentorPage() {
   };
 
   const renderComponent = () => {
-    const sessionSchedule = normalizeSchedulesForSession(todaySchedule);
-    const sessionUpcoming = normalizeSchedulesForSession(upcomingSchedule);
+    const sessionSchedule = normalizeSchedulesForSession(todaySchedules).map((session: any) => ({
+      ...session,
+      mentor: {
+        ...session.mentor,
+        name: session.mentor.name ?? session.mentor.user?.name ?? '',
+      }
+    }));
+    const sessionUpcoming = normalizeSchedulesForSession(upcomingSchedules).map((session: any) => ({
+      ...session,
+      mentor: {
+        ...session.mentor,
+        name: session.mentor.name ?? session.mentor.user?.name ?? '',
+      }
+    }));
 
     switch (activeComponent) {
       case 'main':
@@ -185,8 +181,9 @@ export default function MentorPage() {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             setUserId={() => {}}
-            mentorData={userData}
+            mentorData={userData ?? undefined}
             userData={userData}
+            createSchedule={createSchedule}
           />
         );
       case 'session':
@@ -197,21 +194,118 @@ export default function MentorPage() {
           onScheduleCreated={refetchData}
         />;
       case 'reviews':
+        // Mock data for mentor reviews (feedback received from learners)
+        const mockFeedbacks = [
+          {
+            id: 'FB001',
+            rating: 5,
+            comment: 'Excellent mentor! Very patient and explained everything clearly. I finally understand pointers in C++!',
+            reviewer: {
+              name: 'Kent Ann Ecal',
+              course: 'Bachelor of Science in Computer Science (BSCS)',
+              year: '2nd Year',
+              image: 'https://placehold.co/100x100',
+              program: 'Bachelor of Science in Computer Science (BSCS)',
+              yearLevel: '2nd Year'
+            },
+            subject: 'C++ Programming',
+            date: '2024-11-30',
+            location: 'Online - Zoom',
+            mentorId: userData?.userId || 'M001',
+            scheduleId: 'SCH101',
+            reviewerId: 'L001'
+          },
+          {
+            id: 'FB002',
+            rating: 4,
+            comment: 'Great session! The mentor was well-prepared and had good examples. Could improve on time management though.',
+            reviewer: {
+              name: 'Maverick Lance Coronel',
+              course: 'Bachelor of Science in Information Technology (BSIT)',
+              year: '3rd Year',
+              image: 'https://placehold.co/100x100',
+              program: 'Bachelor of Science in Information Technology (BSIT)',
+              yearLevel: '3rd Year'
+            },
+            subject: 'Web Development',
+            date: '2024-11-28',
+            location: 'Room 204',
+            mentorId: userData?.userId || 'M001',
+            scheduleId: 'SCH102',
+            reviewerId: 'L002'
+          },
+          {
+            id: 'FB003',
+            rating: 5,
+            comment: 'Outstanding! Made database normalization so much easier to understand. Will book again!',
+            reviewer: {
+              name: 'Vincent David Ong',
+              course: 'Bachelor of Science in Computer Science (BSCS)',
+              year: '2nd Year',
+              image: 'https://placehold.co/100x100',
+              program: 'Bachelor of Science in Computer Science (BSCS)',
+              yearLevel: '2nd Year'
+            },
+            subject: 'Database Management',
+            date: '2024-11-25',
+            location: 'Online - Google Meet',
+            mentorId: userData?.userId || 'M001',
+            scheduleId: 'SCH103',
+            reviewerId: 'L003'
+          },
+          {
+            id: 'FB004',
+            rating: 5,
+            comment: 'Perfect session! The mentor used real-world examples that made everything click. Highly recommend!',
+            reviewer: {
+              name: 'Paulo Cordova',
+              course: 'Bachelor of Science in Information Technology (BSIT)',
+              year: '1st Year',
+              image: 'https://placehold.co/100x100',
+              program: 'Bachelor of Science in Information Technology (BSIT)',
+              yearLevel: '1st Year'
+            },
+            subject: 'Introduction to Programming',
+            date: '2024-11-22',
+            location: 'Library Study Room 3',
+            mentorId: userData?.userId || 'M001',
+            scheduleId: 'SCH104',
+            reviewerId: 'L004'
+          },
+          {
+            id: 'FB005',
+            rating: 5,
+            comment: 'Amazing tutor! Broke down complex concepts into simple terms. Best session ever!',
+            reviewer: {
+              name: 'Rosary Jane Garcia',
+              course: 'Bachelor of Science in Computer Science (BSCS)',
+              year: '3rd Year',
+              image: 'https://placehold.co/100x100',
+              program: 'Bachelor of Science in Computer Science (BSCS)',
+              yearLevel: '3rd Year'
+            },
+            subject: 'Game Development',
+            date: '2024-11-18',
+            location: 'Computer Lab 5',
+            mentorId: userData?.userId || 'M001',
+            scheduleId: 'SCH105',
+            reviewerId: 'L005'
+          }
+        ];
+        
         return <ReviewsComponent 
-          feedbacks={feedbacks}
+          feedbacks={mockFeedbacks}
           userData={userData}
         />;
       case 'files':
         return <FilesComponent 
           files={files} 
           setFiles={setFiles}
-          userData={userData}
         />;
       case 'fileManage':
         return <FileManagerComponent 
           files={files} 
           setFiles={setFiles}
-          userData={userData}
         />;
       default:
         return (
@@ -220,8 +314,9 @@ export default function MentorPage() {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             setUserId={() => {}}
-            mentorData={userData}
+            mentorData={userData ?? undefined}
             userData={userData}
+            createSchedule={createSchedule}
           />
         );
     }
@@ -248,7 +343,6 @@ export default function MentorPage() {
       
       {showLogoutModal && (
         <LogoutComponent
-          onConfirm={handleLogout}
           onCancel={cancelLogout}
         />
       )}

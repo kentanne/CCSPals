@@ -2,8 +2,7 @@ import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 
 const LearnerInfoForm = dynamic(() => import('@/components/organisms/forms/LearnerInfoForm/page'), {
-  loading: () => <div style={{ padding: '2rem', textAlign: 'center' }}>Loading form...</div>,
-  ssr: false
+  loading: () => <div style={{ padding: '2rem', textAlign: 'center' }}>Loading form...</div>
 });
 
 export const metadata: Metadata = {

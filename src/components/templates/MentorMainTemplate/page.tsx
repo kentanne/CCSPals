@@ -25,6 +25,7 @@ interface MainComponentProps {
   mentorData?: MentorData;
   setUserId?: (id: string | null) => void;
   userData?: any;
+  createSchedule: (data: any) => Promise<any>;
 }
 
 export default function MainComponent({ 
@@ -33,7 +34,8 @@ export default function MainComponent({
   setSearchQuery,
   mentorData = {},
   setUserId,
-  userData
+  userData,
+  createSchedule
 }: MainComponentProps) {
   const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
   const [isView, setIsView] = useState(false);
@@ -177,6 +179,7 @@ export default function MainComponent({
   };
 
   const openView = (id: string) => {
+    console.log('MentorMainTemplate - createSchedule available?', typeof createSchedule, createSchedule);
     setSelectedUserId(id);
     setIsView(true);
     if (setUserId) {
@@ -311,7 +314,9 @@ export default function MainComponent({
             <ViewUser 
               userId={selectedUserId} 
               mentorData={mentorData}
+              userData={userData}
               onClose={closeView}
+              createSchedule={createSchedule}
             />
           </div>
         </div>
